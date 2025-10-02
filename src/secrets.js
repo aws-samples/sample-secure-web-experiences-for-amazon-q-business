@@ -1,7 +1,14 @@
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+import * as dotenv from 'dotenv';
+import { existsSync } from 'fs';
+
+// Load environment variables early for secrets access
+if (!process.env.AWS_LAMBDA_FUNCTION_NAME && existsSync('config/.env')) {
+  dotenv.config({ path: 'config/.env' });
+}
 
 const client = new SecretsManagerClient({
-  region: process.env.REGION || process.env.AWS_REGION || 'us-east-1'
+  region: process.env.AWS_REGION || process.env.REGION || 'us-east-1'
 });
 
 export async function getQBusinessConfig() {
